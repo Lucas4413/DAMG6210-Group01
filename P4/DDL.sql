@@ -118,7 +118,7 @@ CREATE TABLE PortfolioRecord (
     Quantity INT not null,
     PurchasePrice DECIMAL(10, 2) not null,
 	[TotalValue] AS (Quantity * PurchasePrice),
-	PRIMARY KEY (StockID, [Date]),
+	PRIMARY KEY (PortfolioID, StockID, [Date]),
     FOREIGN KEY (PortfolioID) REFERENCES Portfolio(PortfolioID),
     FOREIGN KEY (StockID, [Date]) REFERENCES StockPriceInfo(StockID, [Date]),
 );
