@@ -4,16 +4,35 @@ ON PortfolioRecord
 AFTER INSERT
 AS
 BEGIN
-    DECLARE @PortfolioID INT;
+	 -- Declare variables to store inserted row values
+    DECLARE @InsertedPortfolioID INT;
     
-    -- Get PortfolioID from inserted records
-    SELECT @PortfolioID = PortfolioID FROM inserted;
-    
-    -- Update NumberOfRecords and TotalAssets in Portfolio table
-    UPDATE Portfolio
-    SET NumberOfRecords = dbo.GetNumberOfRecords(@PortfolioID),
-        TotalAssets = dbo.GetTotalAssets(@PortfolioID)
-    WHERE PortfolioID = @PortfolioID;
+    -- Declare cursor to iterate over inserted rows
+    DECLARE cursorInserted CURSOR FOR
+    SELECT PortfolioID FROM inserted;
+
+    -- Open the cursor
+    OPEN cursorInserted;
+
+    -- Fetch the first row
+    FETCH NEXT FROM cursorInserted INTO @InsertedPortfolioID;
+
+    -- Start looping through the inserted rows
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        -- Update NumberOfRecords and TotalAssets in Portfolio table for each inserted PortfolioID
+        UPDATE Portfolio
+        SET NumberOfRecords = dbo.GetNumberOfRecords(@InsertedPortfolioID),
+            TotalAssets = dbo.GetTotalAssets(@InsertedPortfolioID)
+        WHERE PortfolioID = @InsertedPortfolioID;
+        
+        -- Fetch the next row
+        FETCH NEXT FROM cursorInserted INTO @InsertedPortfolioID;
+    END;
+
+    -- Close and deallocate the cursor
+    CLOSE cursorInserted;
+    DEALLOCATE cursorInserted;
 END;
 GO
 
@@ -56,7 +75,7 @@ END;
 GO
 
 -- Create trigger for insert on Order
-CREATE TRIGGER trgInsertOnOrder
+ALTER TRIGGER trgInsertOnOrder
 ON [Order]
 AFTER INSERT
 AS
