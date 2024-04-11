@@ -75,7 +75,7 @@ END;
 GO
 
 -- Create trigger for insert on Order
-ALTER TRIGGER trgInsertOnOrder
+CREATE TRIGGER trgInsertOnOrder
 ON [Order]
 AFTER INSERT
 AS
