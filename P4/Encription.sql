@@ -1,6 +1,6 @@
 -- Encription the Password column in the Investor table
 CREATE MASTER KEY
-ENCRYPTION BY PASSWORD = 'Strong Password';
+ENCRYPTION BY PASSWORD = 'Str0ngP@ssw0rd!';
 
 -- make sure the Master Key exists
 SELECT name KeyName,
