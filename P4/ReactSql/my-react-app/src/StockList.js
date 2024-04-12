@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-
 function StockList() {
   const [stocks, setStocks] = useState([]);
+  const [selectedStockId, setSelectedStockId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,40 +33,68 @@ function StockList() {
     navigate(`/edit-stock/${stockId}`);
   };
 
+  const toggleDescription = (stockId) => {
+    setSelectedStockId(selectedStockId === stockId ? null : stockId);
+  };
 
   const style = {
-    homeContainer: {
-      backgroundImage: "url('/stock1.jpg')", // Replace 'stock1.jpg' with the actual path to your image
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      height: '100vh', // Adjust the height as needed
+    container: {
+      minHeight: '100vh',
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      color: 'white', // Set text color to contrast with the background
-      textAlign: 'center',
+      backgroundImage: "url('/stock1.jpg')",
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
     },
-    heading: {
-      fontSize: '3rem', // Adjust font size as needed
+    content: {
+      padding: '20px',
+      width: '80%',
+      backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent background for content
+    },
+    stockItem: {
+      marginBottom: '20px',
+      border: '1px solid #ccc',
+      borderRadius: '5px',
+      padding: '10px',
+      backgroundColor: 'white',
+    },
+    stockName: {
+      cursor: 'pointer',
+      fontWeight: 'bold',
+    },
+    stockDescription: {
+      marginTop: '10px',
+      color: '#555',
+    },
+    button: {
+      marginLeft: '10px',
     },
   };
 
   return (
-    <div style={style.homeContainer}>
-    <div>
-      <h1>Stock Information</h1>
-      {/* <AddStockForm onStockAdded={fetchStocks} /> */}
-      <ul>
+    <div style={style.container}>
+      <div style={style.content}>
         {stocks.map(stock => (
-          <li key={stock.StockID}>
-            {stock.Name}
-            <button onClick={() => handleEditClick(stock.StockID)}>Edit</button>
-            <button onClick={() => handleDeleteStock(stock.StockID)}>Delete</button>
-          </li>
+          <div key={stock.StockID} style={style.stockItem}>
+            <div onClick={() => toggleDescription(stock.StockID)} style={style.stockName}>
+              {stock.Name}
+            </div>
+            {selectedStockId === stock.StockID && (
+              <div style={style.stockDescription}>{stock.Description}</div>
+            )}
+            <div>
+              <button style={style.button} onClick={() => handleEditClick(stock.StockID)}>Edit</button>
+              <button style={style.button} onClick={() => handleDeleteStock(stock.StockID)}>Delete</button>
+            </div>
+          </div>
         ))}
-      </ul>
-    </div>
+      </div>
     </div>
   );
 }
